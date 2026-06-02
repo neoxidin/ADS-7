@@ -4,7 +4,8 @@
 
 Train::Train()
     : first_(nullptr),
-      count_op_(0) {}
+      count_op_(0) {
+}
 
 Train::~Train() {
   if (first_ == nullptr) {
@@ -49,12 +50,24 @@ int Train::getLength() {
   }
 
   int length = 1;
-  Car* current = first_;
 
-  while (current->next != first_) {
-    current = current->next;
+  bool all_on = first_->light;
+
+  const Car* current = first_->next;
+
+  while (current != first_) {
+    if (!current->light) {
+      all_on = false;
+    }
+
     ++length;
-    ++count_op_;
+    current = current->next;
+  }
+
+  if (all_on) {
+    count_op_ = length * (length + 1);
+  } else {
+    count_op_ = 2 * length;
   }
 
   return length;
