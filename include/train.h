@@ -1,45 +1,30 @@
-#include "train.h"
+#ifndef INCLUDE_TRAIN_H_
+#define INCLUDE_TRAIN_H_
 
-Train::Train() : countOp_(0), first_(nullptr) {}
+class Train {
+ private:
+  struct Car {
+    bool light;
+    Car* next;
+    Car* prev;
 
-Train::~Train() {
-  if (!first_) return;
-  Car* cur = first_->next;
-  while (cur != first_) {
-    Car* tmp = cur;
-    cur = cur->next;
-    delete tmp;
-  }
-  delete first_;
-}
+    explicit Car(bool state)
+        : light(state),
+          next(nullptr),
+          prev(nullptr) {}
+  };
 
-void Train::addCar(bool light) {
-  Car* car = new Car{light, nullptr, nullptr};
-  if (!first_) {
-    car->next = car;
-    car->prev = car;
-    first_ = car;
-  } else {
-    Car* last = first_->prev;
-    last->next = car;
-    car->prev  = last;
-    car->next  = first_;
-    first_->prev = car;
-  }
-}
+  Car* first_;
+  int count_op_;
 
-int Train::getLength() {
-  if (!first_) return 0;
-  int  len = 1;
-  Car* cur = first_->next;
-  while (cur != first_) {
-    ++countOp_;
-    ++len;
-    cur = cur->next;
-  }
-  return len;
-}
+ public:
+  Train();
+  ~Train();
 
-int Train::getOpCount() {
-  return countOp_;
-}
+  void AddCar(bool light);
+
+  int GetLength();
+  int GetOpCount() const;
+};
+
+#endif  // INCLUDE_TRAIN_H_
