@@ -1,3 +1,5 @@
+// Copyright 2022 NNTU-CS
+
 #ifndef INCLUDE_TRAIN_H_
 #define INCLUDE_TRAIN_H_
 
@@ -21,10 +23,9 @@ class Train {
   Train();
   ~Train();
 
-  void AddCar(bool light);
-
-  int GetLength();
-  int GetOpCount() const;
+  void addCar(bool light);
+  int getLength();
+  int getOpCount();
 };
 
 #endif  // INCLUDE_TRAIN_H_
