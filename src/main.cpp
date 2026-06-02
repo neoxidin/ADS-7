@@ -1,62 +1,65 @@
-#include "../include/train.h"
+// Copyright 2022 NNTU-CS
 
-#include <fstream>
-#include <iostream>
-#include <random>
+#include "train.h"
 
-int main() {
-  std::ofstream out("results.csv");
+Train::Train()
+    : first_(nullptr),
+      count_op_(0) {}
 
-  out << "n,type,ops\n";
-
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::bernoulli_distribution dist(0.5);
-
-  for (int n = 2; n <= 1000; n += 10) {
-    {
-      Train train;
-
-      for (int i = 0; i < n; ++i) {
-        train.AddCar(false);
-      }
-
-      train.GetLength();
-
-      out << n << ",all_off,"
-          << train.GetOpCount() << "\n";
-    }
-
-    {
-      Train train;
-
-      for (int i = 0; i < n; ++i) {
-        train.AddCar(true);
-      }
-
-      train.GetLength();
-
-      out << n << ",all_on,"
-          << train.GetOpCount() << "\n";
-    }
-
-    {
-      Train train;
-
-      for (int i = 0; i < n; ++i) {
-        train.AddCar(dist(gen));
-      }
-
-      train.GetLength();
-
-      out << n << ",random,"
-          << train.GetOpCount() << "\n";
-    }
+Train::~Train() {
+  if (first_ == nullptr) {
+    return;
   }
 
-  out.close();
+  Car* current = first_->next;
 
-  std::cout << "Results saved to results.csv\n";
+  while (current != first_) {
+    Car* next = current->next;
+    delete current;
+    current = next;
+  }
 
-  return 0;
+  delete first_;
+}
+
+void Train::addCar(bool light) {
+  Car* car = new Car(light);
+
+  if (first_ == nullptr) {
+    first_ = car;
+    first_->next = first_;
+    first_->prev = first_;
+    return;
+  }
+
+  Car* last = first_->prev;
+
+  last->next = car;
+  car->prev = last;
+
+  car->next = first_;
+  first_->prev = car;
+}
+
+int Train::getLength() {
+  count_op_ = 0;
+
+  if (first_ == nullptr) {
+    return 0;
+  }
+
+  int length = 1;
+  Car* current = first_;
+
+  while (current->next != first_) {
+    current = current->next;
+    ++length;
+    ++count_op_;
+  }
+
+  return length;
+}
+
+int Train::getOpCount() {
+  return count_op_;
 }
