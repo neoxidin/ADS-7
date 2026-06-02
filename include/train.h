@@ -13,7 +13,8 @@ class Train {
     explicit Car(bool state)
         : light(state),
           next(nullptr),
-          prev(nullptr) {}
+          prev(nullptr) {
+    }
   };
 
   Car* first_;
